@@ -1,25 +1,10 @@
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  User,
-  CreditCard,
-  Settings,
-  LogOut,
-  Wand2,
-} from "lucide-react"
+
 import Dropdown from "@/components/drop-down"
 import ContentPage from "@/components/ContentPage"
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout() {
 
   return (
     <SidebarProvider>

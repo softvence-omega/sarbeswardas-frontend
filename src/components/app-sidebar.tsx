@@ -18,20 +18,18 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from "@/components/ui/sidebar"
-import {
-  Share2,
-  Edit3,
-  Trash2,
-} from "lucide-react"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import ShareDialog from "./share-dialog"
+import RenameDialog from "./rename-dialog"
+import DeleteDialog from "./delete-dialog"
 
 export function AppSidebar() {
   const recentItems = [
@@ -118,18 +116,10 @@ export function AppSidebar() {
                       </DropdownMenuTrigger>
 
                       <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem>
-                          <Share2 className="mr-2 h-4 w-4" />
-                          Share
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Edit3 className="mr-2 h-4 w-4" />
-                          Rename
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-500">
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
+
+                        <ShareDialog />
+                        <RenameDialog />
+                        <DeleteDialog />
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
