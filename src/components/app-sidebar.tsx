@@ -37,6 +37,11 @@ import { useTheme } from "next-themes"
 
 export function AppSidebar() {
   const { theme } = useTheme()
+    const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true) // client mount হয়ে গেলে mounted true হবে
+  }, [])
   const recentItems = [
     "What is ui ux design?",
     "Can you write me...",
@@ -57,19 +62,15 @@ export function AppSidebar() {
               <div className="flex items-center justify-between">
                 <div className="p-5 border border-border bg-card rounded-2xl">
                   <div className="flex items-start gap-3">
-                    {theme === "dark" ? (
-                      <Image
-                        src={darkLogo}
-                        alt="Logo"
-                        className=" w-auto object-contain"
-                      />
-                    ) : (
-                      <Image
-                        src={lightLogo}
-                        alt="Logo"
-                        className="h-10 w-auto object-contain"
-                      />
-                    )}
+                  {mounted ? (
+          theme === "dark" ? (
+            <Image src={darkLogo} alt="Logo" className="w-auto object-contain" />
+          ) : (
+            <Image src={lightLogo} alt="Logo" className="w-auto object-contain" />
+          )
+        ) : (
+          <div className="w-24 h-10 bg-gray-300 dark:bg-gray-700 animate-pulse rounded" />
+        )}
                   </div>
 
                   <div className="mt-2">
