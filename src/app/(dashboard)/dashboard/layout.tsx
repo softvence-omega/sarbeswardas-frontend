@@ -10,7 +10,7 @@ export default function Layout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex bg-background border-b dark:bg-[#161C24] h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear 
+        <header className="flex bg-sidebar border-b dark:bg-card h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear 
         group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex w-full justify-between items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />

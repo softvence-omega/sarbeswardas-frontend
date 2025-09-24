@@ -32,8 +32,9 @@ import RenameDialog from "./rename-dialog"
 import DeleteDialog from "./delete-dialog"
 import Image from "next/image"
 import lightLogo from "../../public/images/logo-light.jpeg"
-import DarkLogo from "../../public/images/logo-dark.jpeg"
+import darkLogo from "../../public/images/logo-dark.jpeg"
 import { useTheme } from "next-themes"
+
 export function AppSidebar() {
   const { theme } = useTheme()
   const recentItems = [
@@ -46,31 +47,29 @@ export function AppSidebar() {
   ]
 
   return (
-    <Sidebar collapsible="offcanvas" className="dark:bg-[#161C24] text-white">
+    <Sidebar collapsible="offcanvas" className="bg-background text-foreground">
       {/* Header */}
       <SidebarHeader className="p-3 border rounded-lg border-dashed">
         <SidebarGroup>
           <SidebarGroupContent>
             <div className="flex flex-col gap-5">
-              {/* sidebar top some text */}
+              {/* Sidebar Logo + Info */}
               <div className="flex items-center justify-between">
-                <div className=" p-5 border border-gray-600 bg-background rounded-2xl">
+                <div className="p-5 border border-border bg-card rounded-2xl">
                   <div className="flex items-start gap-3">
-                    {
-                      theme === "dark" ? (
-                        <Image
-                          src={DarkLogo}
-                          alt="Logo"
-                          className=" object-cover"
-                        />) : (
-                        <Image
-                          src={lightLogo}
-                          alt="Logo"
-                          className="object-cover"
-                        />)
-                    }
-
-
+                    {theme === "dark" ? (
+                      <Image
+                        src={darkLogo}
+                        alt="Logo"
+                        className=" w-auto object-contain"
+                      />
+                    ) : (
+                      <Image
+                        src={lightLogo}
+                        alt="Logo"
+                        className="h-10 w-auto object-contain"
+                      />
+                    )}
                   </div>
 
                   <div className="mt-2">
@@ -83,7 +82,7 @@ export function AppSidebar() {
 
               <Button className="bg-green-500 hover:bg-green-600 flex items-center text-white">
                 New Query
-                <PlusCircle className="h-4 w-4 mt-1 mr-2" />
+                <PlusCircle className="h-4 w-4 ml-2" />
               </Button>
             </div>
           </SidebarGroupContent>
@@ -95,23 +94,23 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             {/* Search */}
-            <div className="relative ">
+            <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search"
-                className="pl-8 bg-transparent border-gray-700"
+                className="pl-8 bg-background border-border"
               />
             </div>
 
             {/* Recent */}
-            <div className="mt-5 ">
+            <div className="mt-5">
               <p className="text-xs text-muted-foreground mb-2">Recent</p>
-              <hr className="bg-gray-500/40 mb-2" />
+              <hr className="bg-border mb-2" />
               <div className="space-y-1 max-h-48 overflow-y-hidden">
                 {recentItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between w-full rounded-lg hover:bg-muted/20 transition-colors"
+                    className="flex items-center justify-between w-full rounded-lg hover:bg-muted transition-colors"
                   >
                     {/* Left side: main button */}
                     <Button
@@ -122,7 +121,7 @@ export function AppSidebar() {
                       <span className="truncate">{item}</span>
                     </Button>
 
-                    {/* Right side: three dot action button with dropdown */}
+                    {/* Right side: actions */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button className="p-2 text-muted-foreground hover:text-foreground shrink-0">
@@ -131,7 +130,6 @@ export function AppSidebar() {
                       </DropdownMenuTrigger>
 
                       <DropdownMenuContent align="end" className="w-40">
-
                         <ShareDialog />
                         <RenameDialog />
                         <DeleteDialog />
@@ -139,7 +137,6 @@ export function AppSidebar() {
                     </DropdownMenu>
                   </div>
                 ))}
-
               </div>
               <Button
                 variant="ghost"
@@ -174,7 +171,7 @@ export function AppSidebar() {
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full text-xs border-green-600 text-green-500"
+                className="w-full text-xs border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950"
               >
                 Upgrade Plan
               </Button>
@@ -182,7 +179,7 @@ export function AppSidebar() {
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full text-xs text-red-500 border-red-600"
+                className="w-full text-xs text-red-500 border-red-600 hover:bg-red-50 dark:hover:bg-red-950"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Log out

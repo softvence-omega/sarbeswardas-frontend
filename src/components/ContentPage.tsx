@@ -63,14 +63,14 @@ const ContentPage = () => {
   }
 
   return (
-    <div className="flex h-full flex-col items-center justify-center p-4 gap-6 ">
+    <div className="flex h-full flex-col items-center justify-center p-4 gap-6">
       {/* Header */}
       {messages.length === 0 ? (
-        <h1 className="text-2xl md:text-3xl md:max-w-[500px] font-bold text-white text-center">
+        <h1 className="text-2xl md:text-3xl md:max-w-[500px] font-bold text-foreground text-center">
           Every perspective, every AI, one place.
         </h1>
       ) : (
-        <div className="w-full max-w-3xl border border-border rounded-xl shadow-md whitespace-pre-wrap text-foreground leading-relaxed">
+        <div className="w-full max-w-3xl border border-border rounded-xl  whitespace-pre-wrap text-foreground leading-relaxed bg-background">
           <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
             {messages.map((msg, idx) => (
               <div
@@ -92,7 +92,7 @@ const ContentPage = () => {
                     className={`p-4 rounded-xl text-sm whitespace-pre-wrap ${
                       msg.role === "user"
                         ? "bg-green-600 text-white self-end"
-                        : "bg-[#212B36] border border-border text-foreground"
+                        : "bg-muted border border-border text-foreground"
                     }`}
                   >
                     {msg.content}
@@ -102,10 +102,18 @@ const ContentPage = () => {
                   {msg.role === "ai" && (
                     <div className="flex justify-between md:flex-row flex-col gap-3 items-center mt-3">
                       <div className="flex gap-3">
-                        <Button size="icon" variant="ghost" className="rounded-lg border border-border">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="rounded-lg border border-border"
+                        >
                           <ThumbsUp className="h-4 w-4" />
                         </Button>
-                        <Button size="icon" variant="ghost" className="rounded-lg border border-border">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="rounded-lg border border-border"
+                        >
                           <ThumbsDown className="h-4 w-4" />
                         </Button>
                         <Button
@@ -116,14 +124,18 @@ const ContentPage = () => {
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
-                        <Button size="icon" variant="ghost" className="rounded-lg border border-border">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="rounded-lg border border-border"
+                        >
                           <Share2 className="h-4 w-4" />
                         </Button>
                       </div>
 
                       <Button
                         variant="outline"
-                        className="text-green-500 border-green-500 hover:bg-green-950/20"
+                        className="text-green-600 border-green-600 dark:text-green-500 dark:border-green-500 hover:bg-green-100 dark:hover:bg-green-950/20"
                       >
                         Show All Responses <FileText className="ml-2 h-4 w-4" />
                       </Button>
@@ -145,11 +157,11 @@ const ContentPage = () => {
       )}
 
       {/* Textarea Container */}
-      <div className="relative w-full max-w-3xl bg-[#1A222C] p-6 rounded-xl shadow-lg border border-gray-700">
+      <div className="relative w-full max-w-3xl bg-sidebar dark:bg-card p-6 rounded-xl  border border-border">
         <textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          className="w-full bg-background text-white p-3 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-500 text-lg"
+          className="w-full bg-background  text-foreground p-3 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-500 text-lg"
           rows={2}
           placeholder="Type your query here..."
         />
@@ -158,14 +170,18 @@ const ContentPage = () => {
         <div className="flex justify-between items-center mt-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-gray-400 hover:text-white">
-                <span className="mr-2">Specification</span>
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                <span className="mr-2">Mode</span>
                 <span className="ml-1">ⓘ</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-[#2A3440] text-white">
-              <DropdownMenuItem className="hover:bg-[#3A4555]">Query</DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-[#3A4555]">Create Image</DropdownMenuItem>
+            <DropdownMenuContent className="bg-popover text-popover-foreground">
+              <DropdownMenuItem className="hover:bg-accent hover:text-accent-foreground">
+                Query
+              </DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-accent hover:text-accent-foreground">
+                Create Image
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -174,7 +190,9 @@ const ContentPage = () => {
             onClick={handleGenerate}
             disabled={isGenerating}
           >
-            {isGenerating ? "Generating..." : (
+            {isGenerating ? (
+              "Generating..."
+            ) : (
               <>
                 Generate <Wand2 className="ml-2 h-4 w-4" />
               </>
