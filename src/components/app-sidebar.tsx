@@ -30,8 +30,12 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import ShareDialog from "./share-dialog"
 import RenameDialog from "./rename-dialog"
 import DeleteDialog from "./delete-dialog"
-
+import Image from "next/image"
+import lightLogo from "../../public/images/logo-light.jpeg"
+import DarkLogo from "../../public/images/logo-dark.jpeg"
+import { useTheme } from "next-themes"
 export function AppSidebar() {
+  const { theme } = useTheme()
   const recentItems = [
     "What is ui ux design?",
     "Can you write me...",
@@ -52,10 +56,21 @@ export function AppSidebar() {
               <div className="flex items-center justify-between">
                 <div className=" p-5 border border-gray-600 bg-background rounded-2xl">
                   <div className="flex items-start gap-3">
-                    <div className="bg-green-600 h-8 w-8 rounded-md flex items-center justify-center text-white font-bold">
-                      N
-                    </div>
-                    <div className="font-semibold text-2xl">Multiverse</div>
+                    {
+                      theme === "dark" ? (
+                        <Image
+                          src={DarkLogo}
+                          alt="Logo"
+                          className=" object-cover"
+                        />) : (
+                        <Image
+                          src={lightLogo}
+                          alt="Logo"
+                          className="object-cover"
+                        />)
+                    }
+
+
                   </div>
 
                   <div className="mt-2">
