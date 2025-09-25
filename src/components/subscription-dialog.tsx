@@ -11,10 +11,10 @@ const SubscriptionDropdownItem = () => {
   const [open, setOpen] = useState(false)
 
   return (
-    <div>
+    <div className="overflow-y-auto max-h-[80vh]">
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[650px] rounded-2xl bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-          <div className="p-4 sm:p-6 space-y-6">
+        <DialogContent className="sm:max-w-[650px] max-h-[90vh] rounded-2xl bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 p-0">
+          <div className="p-4 sm:p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-2rem)]">
             {/* Plans Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Free Plan */}
@@ -30,6 +30,9 @@ const SubscriptionDropdownItem = () => {
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
+                  <li>✓ Your plan specification will show here.</li>
+                  <li>✓ Your plan specification will show here.</li>
+                  <li>✓ Your plan specification will show here.</li> {/* Added extra item to test overflow */}
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
                 </ul>
@@ -53,6 +56,9 @@ const SubscriptionDropdownItem = () => {
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
+                  <li>✓ Your plan specification will show here.</li> {/* Added extra item to test overflow */}
+                  <li>✓ Your plan specification will show here.</li>
+                  <li>✓ Your plan specification will show here.</li>
                 </ul>
                 <button className="mt-6 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 font-medium">
                   Purchase Now
@@ -61,7 +67,7 @@ const SubscriptionDropdownItem = () => {
             </div>
 
             {/* Go Back Button */}
-            <div className="text-center">
+            <div className="text-center p-4">
               <button
                 onClick={() => setOpen(false)}
                 className="px-4 py-1 border border-gray-400 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 rounded-md hover:text-black hover:border-black dark:hover:text-white dark:hover:border-white"

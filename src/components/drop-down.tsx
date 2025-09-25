@@ -32,7 +32,9 @@ export default function Dropdown() {
                     My Account
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <SubscriptionDropdownItem />
+               <div className="">
+                 <SubscriptionDropdownItem />
+               </div>
                 <SettingsDialog />
                 <PersonalizationDialog />
 
