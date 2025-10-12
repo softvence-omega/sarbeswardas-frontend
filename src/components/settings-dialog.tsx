@@ -1,31 +1,31 @@
-"use client"
-import React, { useState } from "react"
+"use client";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
-import { Settings } from "lucide-react"
-import Image from "next/image"
-import editIcon from "../../public/images/edit-icon.png"
+} from "@/components/ui/dialog";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Settings } from "lucide-react";
+import Image from "next/image";
+import editIcon from "../../public/images/edit-icon.png";
 
 const SettingsDialog = () => {
-  const [open, setOpen] = useState(false)
-  const [tab, setTab] = useState("account")
-  const [editFullName, setEditFullName] = useState(false)
-  const [editEmail, setEditEmail] = useState(false)
-  const [editPassword, setEditPassword] = useState(false)
-  const [fullName, setFullName] = useState("Brooklyn Richard")
-  const [email, setEmail] = useState("mohibulla@gmail.com")
-  const [password, setPassword] = useState("••••••••")
+  const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState("account");
+  const [editFullName, setEditFullName] = useState(false);
+  const [editEmail, setEditEmail] = useState(false);
+  const [editPassword, setEditPassword] = useState(false);
+  const [fullName, setFullName] = useState("Brooklyn Richard");
+  const [email, setEmail] = useState("mohibulla@gmail.com");
+  const [password, setPassword] = useState("••••••••");
 
   const handleEditClick = (field: string) => {
-    if (field === "fullName") setEditFullName(!editFullName)
-    if (field === "email") setEditEmail(!editEmail)
-    if (field === "password") setEditPassword(!editPassword)
-  }
+    if (field === "fullName") setEditFullName(!editFullName);
+    if (field === "email") setEditEmail(!editEmail);
+    if (field === "password") setEditPassword(!editPassword);
+  };
 
   return (
     <div>
@@ -182,16 +182,16 @@ const SettingsDialog = () => {
 
       <DropdownMenuItem
         onClick={(e) => {
-          e.preventDefault()
-          setOpen(true)
+          e.preventDefault();
+          setOpen(true);
         }}
-        className="flex items-center gap-2 text-green-600 hover:text-green-700"
+        className="flex items-center gap-2 text-green-600 hover:text-green-700 cursor-pointer"
       >
         <Settings className="h-4 w-4" />
         Settings
       </DropdownMenuItem>
     </div>
-  )
-}
+  );
+};
 
-export default SettingsDialog
+export default SettingsDialog;

@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
-import { LogOut } from "lucide-react"
-import { useTheme } from "next-themes"
+} from "@/components/ui/dialog";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { LogOut } from "lucide-react";
+import { useTheme } from "next-themes";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 const PersonalizationDialog = () => {
-  const [open, setOpen] = useState(false)
-  const { theme, setTheme, systemTheme } = useTheme()
+  const [open, setOpen] = useState(false);
+  const { theme, setTheme, systemTheme } = useTheme();
 
   return (
     <div>
@@ -42,7 +42,7 @@ const PersonalizationDialog = () => {
                 value={theme === "system" ? "system" : theme}
                 onValueChange={(val) => setTheme(val)}
               >
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-[140px] cursor-pointer">
                   <SelectValue placeholder="Select Theme" />
                 </SelectTrigger>
                 <SelectContent>
@@ -57,7 +57,7 @@ const PersonalizationDialog = () => {
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">Language:</label>
               <Select defaultValue="en">
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-[140px] cursor-pointer">
                   <SelectValue placeholder="Select Language" />
                 </SelectTrigger>
                 <SelectContent>
@@ -70,12 +70,12 @@ const PersonalizationDialog = () => {
 
           {/* Dialog Footer */}
           <div className="flex justify-center gap-3 mt-4">
-            <button className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700">
+            <button className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 cursor-pointer">
               Save
             </button>
             <button
               onClick={() => setOpen(false)}
-              className="w-full border py-2 rounded-md border-gray-500 dark:text-white"
+              className="w-full border py-2 rounded-md border-gray-500 dark:text-white cursor-pointer"
             >
               Cancel
             </button>
@@ -86,16 +86,16 @@ const PersonalizationDialog = () => {
       {/* Dropdown Menu Item */}
       <DropdownMenuItem
         onClick={(e) => {
-          e.preventDefault()
-          setOpen(true)
+          e.preventDefault();
+          setOpen(true);
         }}
-        className="flex items-center gap-2 text-green-600 hover:text-green-700"
+        className="flex items-center gap-2 text-green-600 hover:text-green-700 cursor-pointer "
       >
         <LogOut className="h-4 w-4" />
         Personalization
       </DropdownMenuItem>
     </div>
-  )
-}
+  );
+};
 
-export default PersonalizationDialog
+export default PersonalizationDialog;

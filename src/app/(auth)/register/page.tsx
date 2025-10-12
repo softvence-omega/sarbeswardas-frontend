@@ -1,20 +1,55 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import googleIcon from "../../../../public/images/google-icon.png";
+import { useRegisterMutation } from "@/store/api/authApi";
+import { useRouter } from "next/navigation";
+
+// Zod schema
+const registerSchema = z
+  .object({
+    fullName: z.string().min(2, "Full name is required"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(6, "Confirm password is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+// TypeScript type
+type RegisterFormData = z.infer<typeof registerSchema>;
 
 const Page = () => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  });
+  const router = useRouter();
+  const [useRegister, { isLoading }] = useRegisterMutation();
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Register", { fullName, email, password, confirmPassword });
+  const onSubmit = async (data: RegisterFormData) => {
+    const payload = {
+      fullName: data.fullName,
+      email: data.email,
+      password: data.password,
+    };
+    try {
+      await useRegister(payload);
+      router.replace("/login");
+    } catch (err: any) {
+      console.log(err);
+    }
   };
 
   return (
@@ -59,7 +94,7 @@ const Page = () => {
             </p>
           </div>
 
-          <form onSubmit={handleRegister} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Full Name */}
             <div>
               <label className="block mb-1 text-gray-700 dark:text-gray-300 text-sm font-medium">
@@ -68,11 +103,14 @@ const Page = () => {
               <input
                 type="text"
                 placeholder="Your full name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                {...register("fullName")}
                 className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
-                required
               />
+              {errors.fullName && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.fullName.message}
+                </p>
+              )}
             </div>
 
             {/* Email */}
@@ -83,11 +121,14 @@ const Page = () => {
               <input
                 type="email"
                 placeholder="example@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register("email")}
                 className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
-                required
               />
+              {errors.email && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             {/* Password */}
@@ -98,11 +139,14 @@ const Page = () => {
               <input
                 type="password"
                 placeholder="Type your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                {...register("password")}
                 className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
-                required
               />
+              {errors.password && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Confirm Password */}
@@ -113,17 +157,21 @@ const Page = () => {
               <input
                 type="password"
                 placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                {...register("confirmPassword")}
                 className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
-                required
               />
+              {errors.confirmPassword && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
             </div>
 
             {/* Submit */}
             <Button
               type="submit"
-              className="w-full bg-green-600 hover:bg-green-500 text-white mt-2 rounded-lg py-2 text-lg"
+              disabled={isLoading}
+              className="cursor-pointer w-full bg-green-600 hover:bg-green-500 text-white mt-2 rounded-lg py-2 text-lg"
             >
               Register
             </Button>
@@ -131,7 +179,10 @@ const Page = () => {
             {/* Login Link */}
             <p className="text-center text-gray-600 dark:text-gray-400 text-sm mt-3">
               Already have an account?{" "}
-              <Link href="/login" className="text-green-500 hover:underline font-medium">
+              <Link
+                href="/login"
+                className="text-green-500 hover:underline font-medium"
+              >
                 Login
               </Link>
             </p>
