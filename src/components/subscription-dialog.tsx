@@ -1,14 +1,11 @@
-"use client"
-import React, { useState } from "react"
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog"
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
-import { CreditCard } from "lucide-react"
+"use client";
+import React, { useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { CreditCard } from "lucide-react";
 
 const SubscriptionDropdownItem = () => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="overflow-y-auto max-h-[80vh]">
@@ -32,7 +29,8 @@ const SubscriptionDropdownItem = () => {
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li> {/* Added extra item to test overflow */}
+                  <li>✓ Your plan specification will show here.</li>{" "}
+                  {/* Added extra item to test overflow */}
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
                 </ul>
@@ -56,11 +54,12 @@ const SubscriptionDropdownItem = () => {
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li> {/* Added extra item to test overflow */}
+                  <li>✓ Your plan specification will show here.</li>{" "}
+                  {/* Added extra item to test overflow */}
                   <li>✓ Your plan specification will show here.</li>
                   <li>✓ Your plan specification will show here.</li>
                 </ul>
-                <button className="mt-6 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 font-medium">
+                <button className="mt-6 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 font-medium cursor-pointer">
                   Purchase Now
                 </button>
               </div>
@@ -70,7 +69,7 @@ const SubscriptionDropdownItem = () => {
             <div className="text-center p-4">
               <button
                 onClick={() => setOpen(false)}
-                className="px-4 py-1 border border-gray-400 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 rounded-md hover:text-black hover:border-black dark:hover:text-white dark:hover:border-white"
+                className="px-4 py-1 border border-gray-400 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 rounded-md hover:text-black hover:border-black dark:hover:text-white dark:hover:border-white cursor-pointer"
               >
                 Go Back
               </button>
@@ -82,16 +81,16 @@ const SubscriptionDropdownItem = () => {
       {/* Dropdown Menu Item */}
       <DropdownMenuItem
         onClick={(e) => {
-          e.preventDefault()
-          setOpen(true)
+          e.preventDefault();
+          setOpen(true);
         }}
-        className="flex items-center gap-2 text-green-600 hover:text-green-700"
+        className="flex items-center gap-2 text-green-600 hover:text-green-700 cursor-pointer"
       >
         <CreditCard className="h-4 w-4" />
         Subscription
       </DropdownMenuItem>
     </div>
-  )
-}
+  );
+};
 
-export default SubscriptionDropdownItem
+export default SubscriptionDropdownItem;

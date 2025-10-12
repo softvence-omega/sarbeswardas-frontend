@@ -1,18 +1,18 @@
-"use client"
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function Home() {
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push("/dashboard/home")
-    }, 2000) // 2s পরে redirect করবে
+      router.push("/dashboard/home");
+    }, 2000);
 
-    return () => clearTimeout(timer)
-  }, [router])
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-50 dark:bg-[#161C24] transition-colors">
@@ -48,5 +48,5 @@ export default function Home() {
         }
       `}</style>
     </div>
-  )
+  );
 }
