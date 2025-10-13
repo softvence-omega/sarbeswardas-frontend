@@ -1,13 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForgotPasswordMutation } from "@/store/api/authApi";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import AuthRedirect from "@/components/AuthRedirect";
 
-// ✅ Zod schema
 const forgotPasswordSchema = z.object({
   email: z
     .string()
@@ -23,17 +24,30 @@ const ForgotPasswordPage = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const [useForgotPassword, { isLoading }] = useForgotPasswordMutation();
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+
+  //Load saved email from localStorage when page loads
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("selectedEmail");
+    if (storedEmail) {
+      setValue("email", storedEmail);
+    }
+  }, [setValue]);
+
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
-      await useForgotPassword(data);
+      localStorage.setItem("selectedEmail", data.email);
+      await forgotPassword(data);
       reset();
-    } catch (error: any) {
-      console.log("error", error);
+    } catch (err) {
+      const error = err as FetchBaseQueryError | { data?: { message: string } };
+      console.log(error);
     }
   };
 
@@ -105,4 +119,10 @@ const ForgotPasswordPage = () => {
   );
 };
 
-export default ForgotPasswordPage;
+export default function page() {
+  return (
+    <AuthRedirect>
+      <ForgotPasswordPage />
+    </AuthRedirect>
+  );
+}

@@ -1,6 +1,4 @@
 "use client";
-
-import ProtectedDashboard from "@/components/ProtectedDashboard";
 import React from "react";
 
 const page = () => {

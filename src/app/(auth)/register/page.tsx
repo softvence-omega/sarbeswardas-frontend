@@ -8,8 +8,11 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import googleIcon from "../../../../public/images/google-icon.png";
-import { useRegisterMutation } from "@/store/api/authApi";
+import { useSignUpMutation } from "@/store/api/authApi";
 import { useRouter } from "next/navigation";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+import AuthRedirect from "@/components/AuthRedirect";
 
 // Zod schema
 const registerSchema = z
@@ -27,7 +30,10 @@ const registerSchema = z
 // TypeScript type
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-const Page = () => {
+const SignUpPage = () => {
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
   const {
     register,
     handleSubmit,
@@ -36,7 +42,7 @@ const Page = () => {
     resolver: zodResolver(registerSchema),
   });
   const router = useRouter();
-  const [useRegister, { isLoading }] = useRegisterMutation();
+  const [signUp, { isLoading }] = useSignUpMutation();
 
   const onSubmit = async (data: RegisterFormData) => {
     const payload = {
@@ -45,10 +51,11 @@ const Page = () => {
       password: data.password,
     };
     try {
-      await useRegister(payload);
+      await signUp(payload);
       router.replace("/login");
-    } catch (err: any) {
-      console.log(err);
+    } catch (err) {
+      const error = err as FetchBaseQueryError | { data?: { message: string } };
+      console.log(error);
     }
   };
 
@@ -136,12 +143,29 @@ const Page = () => {
               <label className="block mb-1 text-gray-700 dark:text-gray-300 text-sm font-medium">
                 Password
               </label>
-              <input
-                type="password"
-                placeholder="Type your password"
-                {...register("password")}
-                className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Type your password"
+                  {...register("password")}
+                  className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className=" cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                >
+                  {showPassword ? (
+                    <span>
+                      <FiEye />
+                    </span>
+                  ) : (
+                    <span>
+                      <FiEyeOff />
+                    </span>
+                  )}
+                </button>
+              </div>
               {errors.password && (
                 <p className="text-xs text-red-500 mt-1">
                   {errors.password.message}
@@ -154,12 +178,29 @@ const Page = () => {
               <label className="block mb-1 text-gray-700 dark:text-gray-300 text-sm font-medium">
                 Confirm Password
               </label>
-              <input
-                type="password"
-                placeholder="Confirm your password"
-                {...register("confirmPassword")}
-                className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
-              />
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm your password"
+                  {...register("confirmPassword")}
+                  className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className=" cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                >
+                  {showConfirmPassword ? (
+                    <span>
+                      <FiEye />
+                    </span>
+                  ) : (
+                    <span>
+                      <FiEyeOff />
+                    </span>
+                  )}
+                </button>
+              </div>
               {errors.confirmPassword && (
                 <p className="text-xs text-red-500 mt-1">
                   {errors.confirmPassword.message}
@@ -206,4 +247,10 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default function page() {
+  return (
+    <AuthRedirect>
+      <SignUpPage />
+    </AuthRedirect>
+  );
+}

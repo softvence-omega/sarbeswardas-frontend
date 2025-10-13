@@ -12,8 +12,10 @@ import { useLoginMutation } from "@/store/api/authApi";
 import { useDispatch } from "react-redux";
 import { setToken } from "@/store/api/AuthState";
 import AuthRedirect from "@/components/AuthRedirect";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
-// 1. Define Zod schema
+// Zod schema
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
@@ -25,7 +27,8 @@ const loginSchema = z.object({
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
 const LoginPage = () => {
-  // 2. Initialize React Hook Form with Zod resolver
+  const [showPassword, setShowPassword] = React.useState(false);
+
   const {
     register,
     handleSubmit,
@@ -46,8 +49,9 @@ const LoginPage = () => {
       }).unwrap();
       const token = result.data.accessToken;
       dispatch(setToken(token));
-    } catch (err: any) {
-      console.log(err);
+    } catch (err) {
+      const error = err as FetchBaseQueryError | { data?: { message: string } };
+      console.log(error);
     }
   };
 
@@ -120,12 +124,29 @@ const LoginPage = () => {
                 <label className="block mb-2 text-gray-700 dark:text-gray-300 font-medium">
                   Password
                 </label>
-                <input
-                  type="password"
-                  placeholder="Type your password"
-                  {...register("password")}
-                  className="w-full px-4 py-3 border rounded-lg border-green-500 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Type your password"
+                    {...register("password")}
+                    className="w-full px-4 py-3 border rounded-lg border-green-500 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    {showPassword ? (
+                      <span>
+                        <FiEye />
+                      </span>
+                    ) : (
+                      <span>
+                        <FiEyeOff />
+                      </span>
+                    )}
+                  </button>
+                </div>
                 {errors.password && (
                   <p className="text-red-500 text-xs mt-1">
                     {errors.password.message}
@@ -149,7 +170,7 @@ const LoginPage = () => {
                   type="button"
                   className="text-red-500 text-sm hover:underline cursor-pointer"
                 >
-                  <Link href="/forgot">Forgot Password</Link>
+                  <Link href="/forgot-password">Forgot Password</Link>
                 </button>
               </div>
 
@@ -198,7 +219,8 @@ const LoginPage = () => {
     </div>
   );
 };
-export default function LoginWrapper() {
+
+export default function page() {
   return (
     <AuthRedirect>
       <LoginPage />

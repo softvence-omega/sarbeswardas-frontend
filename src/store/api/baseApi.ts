@@ -1,48 +1,64 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  fetchBaseQuery,
+  FetchArgs,
+  FetchBaseQueryError,
+  BaseQueryApi,
+} from "@reduxjs/toolkit/query/react";
 import { toast } from "react-toastify";
 
+// Type for API response that may contain a message
+interface ApiResponseMessage {
+  message?: string;
+}
+
+// Typed baseQuery
 const baseQuery = fetchBaseQuery({
   baseUrl:
     process.env.NEXT_PUBLIC_API_URL ||
     "https://sarbeswardas-backend.onrender.com",
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as any)?.auth?.token;
+    const token = (getState() as { auth?: { token?: string } })?.auth?.token;
     if (token) {
-      headers.set("authorization", `Bearer ${token}`);
+      headers.set("authorization", `${token}`);
     }
     return headers;
   },
 });
 
-// Wrap fetchBaseQuery to handle global toast messages
-const baseQueryWithToast: typeof baseQuery = async (
-  args,
-  api,
-  extraOptions
+// Fully typed wrapper for toast notifications
+const baseQueryWithToast = async (
+  args: string | FetchArgs,
+  api: BaseQueryApi,
+  extraOptions: object // ✅ Correct type
 ) => {
   const result = await baseQuery(args, api, extraOptions);
 
-  // Only show toasts for POST, PUT, DELETE requests
+  // Determine HTTP method
   const method =
-    typeof args === "object" && args.method ? args.method.toUpperCase() : "GET";
+    typeof args === "object" && "method" in args
+      ? args.method?.toUpperCase()
+      : "GET";
 
-  if (result.data && ["POST", "PUT", "DELETE"].includes(method)) {
-    const message = (result.data as any)?.message;
-    if (message) {
-      toast.success(message);
-    }
+  // Success toast for POST, PUT, DELETE
+  if (result.data && ["POST", "PUT", "DELETE"].includes(method ?? "")) {
+    const message = (result.data as ApiResponseMessage)?.message;
+    if (message) toast.success(message);
   }
 
-  // Handle errors
-  if (result.error && ["POST", "PUT", "DELETE"].includes(method)) {
-    const message =
-      (result.error as any)?.data?.message || "Something went wrong!";
+  // Error toast for POST, PUT, DELETE
+  if (result.error && ["POST", "PUT", "DELETE"].includes(method ?? "")) {
+    const errorData = result.error as FetchBaseQueryError & {
+      data?: ApiResponseMessage;
+    };
+    const message = errorData.data?.message || "Something went wrong!";
     toast.error(message);
   }
 
   return result;
 };
 
+// Create the API
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithToast,

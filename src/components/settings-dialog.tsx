@@ -10,6 +10,10 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Settings } from "lucide-react";
 import Image from "next/image";
 import editIcon from "../../public/images/edit-icon.png";
+import { useLogoutFromAllDevicesMutation } from "@/store/api/authApi";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { removeToken } from "@/store/api/AuthState";
 
 const SettingsDialog = () => {
   const [open, setOpen] = useState(false);
@@ -27,6 +31,17 @@ const SettingsDialog = () => {
     if (field === "password") setEditPassword(!editPassword);
   };
 
+  const [logoutFromAllDevices, { isLoading }] =
+    useLogoutFromAllDevicesMutation();
+
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logoutFromAllDevices();
+    dispatch(removeToken());
+    router.push("/login");
+  };
   return (
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -170,7 +185,11 @@ const SettingsDialog = () => {
                   <label className="text-sm font-medium">
                     Log out of all devices
                   </label>
-                  <button className="text-red-600 dark:text-red-400 py-1 px-3 rounded-md text-sm border border-red-500 hover:bg-red-50 dark:hover:bg-red-950">
+                  <button
+                    disabled={isLoading}
+                    onClick={handleLogout}
+                    className="text-red-600 dark:text-red-400 py-1 px-3 rounded-md text-sm border border-red-500 hover:bg-red-50 dark:hover:bg-red-950 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                  >
                     Log Out
                   </button>
                 </div>

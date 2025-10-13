@@ -1,4 +1,3 @@
-import { log } from "console";
 import { baseApi } from "./baseApi";
 import {
   ChangePassword,
@@ -9,6 +8,10 @@ import {
   SignUp,
 } from "./types/auth";
 
+interface ApiMessageResponse {
+  message: string;
+}
+
 const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, Login>({
@@ -18,37 +21,37 @@ const authApi = baseApi.injectEndpoints({
         body: credentials,
       }),
     }),
-    register: builder.mutation<void, SignUp>({
+    signUp: builder.mutation<ApiMessageResponse, SignUp>({
       query: (user) => ({
         url: "/auth/register",
         method: "POST",
         body: user,
       }),
     }),
-    changePassword: builder.mutation<any, ChangePassword>({
+    changePassword: builder.mutation<ApiMessageResponse, ChangePassword>({
       query: (password) => ({
         url: "/auth/change-password",
         method: "PATCH",
         body: password,
       }),
     }),
-    forgotPassword: builder.mutation<any, ForgotPassword>({
+    forgotPassword: builder.mutation<ApiMessageResponse, ForgotPassword>({
       query: (email) => ({
         url: "/auth/forgot-password",
         method: "POST",
         body: email,
       }),
     }),
-    resetPassword: builder.mutation<any, ResetPassword>({
+    resetPassword: builder.mutation<ApiMessageResponse, ResetPassword>({
       query: (data) => ({
         url: "/auth/reset-password",
         method: "POST",
         body: data,
       }),
     }),
-    logoutFromAllDevices: builder.mutation({
+    logoutFromAllDevices: builder.mutation<ApiMessageResponse, void>({
       query: () => ({
-        url: "/auth/logout-from-all-devices",
+        url: "/auth/log-out-all-device",
         method: "POST",
       }),
     }),
@@ -57,7 +60,7 @@ const authApi = baseApi.injectEndpoints({
 
 export const {
   useLoginMutation,
-  useRegisterMutation,
+  useSignUpMutation,
   useChangePasswordMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,

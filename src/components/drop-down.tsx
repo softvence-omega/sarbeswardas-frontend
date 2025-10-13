@@ -13,7 +13,6 @@ import SettingsDialog from "./settings-dialog";
 import LogoutDialog from "./logout-dialog";
 import PersonalizationDialog from "./personalization-dialog";
 import image from "../../public/images/login.png";
-import ChangePassword from "./ChangePasswordDialog";
 import ChangePasswordDialog from "./ChangePasswordDialog";
 export default function Dropdown() {
   return (

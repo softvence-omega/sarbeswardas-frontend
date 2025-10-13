@@ -35,7 +35,7 @@ const ChangePasswordDialog = () => {
     resolver: zodResolver(changePasswordSchema),
   });
 
-  const [useChangePassword, { isLoading }] = useChangePasswordMutation();
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
 
   const onSubmit = async (data: ChangePasswordFormData) => {
     try {
@@ -43,7 +43,7 @@ const ChangePasswordDialog = () => {
         oldPassword: data.oldPassword,
         newPassword: data.newPassword,
       };
-      await useChangePassword(apiBody);
+      await changePassword(apiBody);
 
       reset();
       setOpen(false);

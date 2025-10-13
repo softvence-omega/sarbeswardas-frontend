@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   LogOut,
   PlusCircle,
   Search,
   MessageSquare,
   MoreVertical,
-} from "lucide-react"
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -17,31 +17,34 @@ import {
   SidebarRail,
   SidebarGroup,
   SidebarGroupContent,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import ShareDialog from "./share-dialog"
-import RenameDialog from "./rename-dialog"
-import DeleteDialog from "./delete-dialog"
-import Image from "next/image"
-import lightLogo from "../../public/images/logo-light.jpeg"
-import darkLogo from "../../public/images/logo-dark.jpeg"
-import { useTheme } from "next-themes"
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import ShareDialog from "./share-dialog";
+import RenameDialog from "./rename-dialog";
+import DeleteDialog from "./delete-dialog";
+import Image from "next/image";
+import lightLogo from "../../public/images/logoLight.png";
+import darkLogo from "../../public/images/logoDark.png";
+import { useTheme } from "next-themes";
+import { useDispatch } from "react-redux";
+import { removeToken } from "@/store/api/AuthState";
+import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
-  const { theme } = useTheme()
-    const [mounted, setMounted] = React.useState(false)
+  const { theme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
-    setMounted(true) // client mount হয়ে গেলে mounted true হবে
-  }, [])
+    setMounted(true);
+  }, []);
   const recentItems = [
     "What is ui ux design?",
     "Can you write me...",
@@ -49,7 +52,15 @@ export function AppSidebar() {
     "Can you discus...",
     "Can you discus...",
     "Can you discus...",
-  ]
+  ];
+
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    dispatch(removeToken());
+    router.push("/login");
+  };
 
   return (
     <Sidebar collapsible="offcanvas" className="bg-background text-foreground">
@@ -60,17 +71,26 @@ export function AppSidebar() {
             <div className="flex flex-col gap-5">
               {/* Sidebar Logo + Info */}
               <div className="flex items-center justify-between">
-                <div className="p-5 border border-border bg-card rounded-2xl">
+                <div className="p-3 border border-border bg-card rounded-2xl">
                   <div className="flex items-start gap-3">
-                  {mounted ? (
-          theme === "dark" ? (
-            <Image src={darkLogo} alt="Logo" className="w-auto object-contain" />
-          ) : (
-            <Image src={lightLogo} alt="Logo" className="w-auto object-contain" />
-          )
-        ) : (
-          <div className="w-24 h-10 bg-gray-300 dark:bg-gray-700 animate-pulse rounded" />
-        )}
+                    {mounted ? (
+                      theme === "dark" ? (
+                        <Image
+                          src={darkLogo}
+                          alt="Logo"
+                          className="w-auto object-contain rounded-lg"
+                          priority
+                        />
+                      ) : (
+                        <Image
+                          src={lightLogo}
+                          alt="Logo"
+                          className="w-auto object-contain"
+                        />
+                      )
+                    ) : (
+                      <div className="w-24 h-10 bg-gray-300 dark:bg-gray-700 animate-pulse rounded" />
+                    )}
                   </div>
 
                   <div className="mt-2">
@@ -172,15 +192,16 @@ export function AppSidebar() {
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full text-xs border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950"
+                className="w-full cursor-pointer text-xs border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950"
               >
                 Upgrade Plan
               </Button>
 
               <Button
+                onClick={handleLogout}
                 variant="outline"
                 size="sm"
-                className="w-full text-xs text-red-500 border-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                className="w-full cursor-pointer text-xs text-red-500 border-red-600 hover:bg-red-50 dark:hover:bg-red-950"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Log out
@@ -192,5 +213,5 @@ export function AppSidebar() {
 
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

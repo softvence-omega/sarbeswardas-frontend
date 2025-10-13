@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { CreditCard } from "lucide-react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const SubscriptionDropdownItem = () => {
   const [open, setOpen] = useState(false);
@@ -10,6 +11,9 @@ const SubscriptionDropdownItem = () => {
   return (
     <div className="overflow-y-auto max-h-[80vh]">
       <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTitle>
+          <VisuallyHidden>Subscription Details</VisuallyHidden>
+        </DialogTitle>
         <DialogContent className="sm:max-w-[650px] max-h-[90vh] rounded-2xl bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 p-0">
           <div className="p-4 sm:p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-2rem)]">
             {/* Plans Grid */}

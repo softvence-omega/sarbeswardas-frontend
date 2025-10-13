@@ -20,7 +20,7 @@ import {
 
 const PersonalizationDialog = () => {
   const [open, setOpen] = useState(false);
-  const { theme, setTheme, systemTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div>
