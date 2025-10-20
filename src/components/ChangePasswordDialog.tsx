@@ -1,18 +1,15 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { MdOutlineLockPerson } from "react-icons/md";
 import { useChangePasswordMutation } from "@/store/api/authApi";
+import CommonButton from "./common/button/CommonButton";
+import ButtonWithLoading from "./common/custom/ButtonWithLoading";
+import CommonBorder from "./common/custom/CommonBorder";
+import CommonWrapper from "./common/space/CommonWrapper";
+import FormHeader from "./reuseable/FormHeader";
 
 // Zod schema
 const changePasswordSchema = z.object({
@@ -23,7 +20,13 @@ const changePasswordSchema = z.object({
 // TypeScript type
 type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
-const ChangePasswordDialog = () => {
+interface ChangePasswordDialogProps {
+  handleClose: () => void;
+}
+
+const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({
+  handleClose,
+}) => {
   const [open, setOpen] = React.useState(false);
 
   const {
@@ -35,7 +38,7 @@ const ChangePasswordDialog = () => {
     resolver: zodResolver(changePasswordSchema),
   });
 
-  const [useChangePassword, { isLoading }] = useChangePasswordMutation();
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
 
   const onSubmit = async (data: ChangePasswordFormData) => {
     try {
@@ -43,7 +46,7 @@ const ChangePasswordDialog = () => {
         oldPassword: data.oldPassword,
         newPassword: data.newPassword,
       };
-      await useChangePassword(apiBody);
+      await changePassword(apiBody);
 
       reset();
       setOpen(false);
@@ -52,84 +55,60 @@ const ChangePasswordDialog = () => {
     }
   };
 
+  const inputClass = {
+    input:
+      "w-full px-4 py-3 text-sm leading-[22px] rounded-lg  border border-[#DFE3E8] dark:border-[#212B36] bg-[#F4F6F8] dark:bg-[#161C24] text-[#919EAB] dark:text-[#637381]  cursor-pointer transition outline-none",
+    label:
+      "text-sm leading-[22px] text-[#212B36] dark:text-[#DFE3E8] mb-1 block",
+    error: "text-red-500 text-xs mt-1",
+  };
   return (
-    <div>
-      {/* Dialog */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="text-lg text-center font-semibold">
-              Change Password
-            </DialogTitle>
-          </DialogHeader>
+    <CommonWrapper className="">
+      <CommonBorder className="sm:min-w-[380px] pointer-events-auto">
+        <FormHeader title="Change Password" handleClose={handleClose} />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-6">
+          <div>
+            <label className={inputClass.label}>Old Password</label>
+            <input
+              type="password"
+              placeholder="Type your old password"
+              {...register("oldPassword")}
+              className={inputClass.input}
+            />
+            {errors.oldPassword && (
+              <p className={inputClass.error}>{errors.oldPassword.message}</p>
+            )}
+          </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <label className="block mb-1 text-gray-700 dark:text-gray-300 text-sm font-medium">
-                Old Password
-              </label>
-              <input
-                type="password"
-                placeholder="Type your password"
-                {...register("oldPassword")}
-                className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
-              />
-              {errors.oldPassword && (
-                <p className="text-xs text-red-500 mt-1">
-                  {errors.oldPassword.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label className={inputClass.label}>New Password</label>
+            <input
+              type="password"
+              placeholder="Type your new password"
+              {...register("newPassword")}
+              className={inputClass.input}
+            />
+            {errors.newPassword && (
+              <p className={inputClass.error}>{errors.newPassword.message}</p>
+            )}
+          </div>
 
-            <div>
-              <label className="block mb-1 text-gray-700 dark:text-gray-300 text-sm font-medium">
-                New Password
-              </label>
-              <input
-                type="password"
-                placeholder="Type your password"
-                {...register("newPassword")}
-                className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
-              />
-              {errors.newPassword && (
-                <p className="text-xs text-red-500 mt-1">
-                  {errors.newPassword.message}
-                </p>
-              )}
-            </div>
-
-            {/* Dialog Footer */}
-            <div className="flex justify-center gap-3 mt-4">
-              <button
-                disabled={isLoading}
-                type="submit"
-                className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 cursor-pointer"
-              >
-                Save
-              </button>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="w-full border py-2 rounded-md border-gray-500 dark:text-white cursor-pointer"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <DropdownMenuItem
-        onClick={(e) => {
-          e.preventDefault();
-          setOpen(true);
-        }}
-        className="flex items-center gap-2 text-green-600 hover:text-green-700 cursor-pointer"
-      >
-        <MdOutlineLockPerson className="h-4 w-4" />
-        Change Password
-      </DropdownMenuItem>
-    </div>
+          <div className="flex justify-center gap-3">
+            <CommonButton disabled={isLoading} type="submit" className="">
+              {isLoading ? <ButtonWithLoading title="Saving..." /> : "Save"}
+            </CommonButton>
+            <CommonButton
+              type="button"
+              variant="outline"
+              onClick={handleClose}
+              className=" "
+            >
+              Cancel
+            </CommonButton>
+          </div>
+        </form>
+      </CommonBorder>
+    </CommonWrapper>
   );
 };
 
