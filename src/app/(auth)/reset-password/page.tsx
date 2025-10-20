@@ -1,10 +1,11 @@
+import AuthRedirect from "@/components/AuthRedirect";
 import ResetPasswordPopup from "@/components/ResetPasswordPopup";
 
 const page = () => {
   return (
-    <div>
+    <AuthRedirect>
       <ResetPasswordPopup />
-    </div>
+    </AuthRedirect>
   );
 };
 
