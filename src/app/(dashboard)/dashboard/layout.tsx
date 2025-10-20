@@ -1,12 +1,12 @@
+import { AppSidebar } from "@/components/app-sidebar";
 import {
-  SidebarProvider,
   SidebarInset,
+  SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
 
-import Dropdown from "@/components/drop-down";
 import ContentPage from "@/components/ContentPage";
+import Dropdown from "@/components/Dropdown";
 import ProtectedDashboard from "@/components/ProtectedDashboard";
 
 export default function Layout() {
@@ -21,7 +21,6 @@ export default function Layout() {
           >
             <div className="flex w-full justify-between items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
-
               <Dropdown />
             </div>
           </header>

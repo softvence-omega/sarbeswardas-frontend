@@ -1,95 +1,104 @@
 "use client";
-import React, { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { CreditCard } from "lucide-react";
+import CommonButton from "./common/button/CommonButton";
+import CommonBorder from "./common/custom/CommonBorder";
+import CommonHeader from "./common/header/CommonHeader";
+import CommonWrapper from "./common/space/CommonWrapper";
+import Separator from "./common/space/Separator";
 
-const SubscriptionDropdownItem = () => {
-  const [open, setOpen] = useState(false);
+const planSpecifications = [
+  "Your plan specification will show here.",
+  "Your plan specification will show here.",
+  "Your plan specification will show here.",
+  "Your plan specification will show here.",
+  "Your plan specification will show here.",
+  "Your plan specification will show here.",
+];
 
+interface SubscriptionDropdownItemProps {
+  handleClose: () => void;
+}
+const SubscriptionDropdownItem: React.FC<SubscriptionDropdownItemProps> = ({
+  handleClose,
+}) => {
   return (
-    <div className="overflow-y-auto max-h-[80vh]">
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[650px] max-h-[90vh] rounded-2xl bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 p-0">
-          <div className="p-4 sm:p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-2rem)]">
-            {/* Plans Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Free Plan */}
-              <div className="border p-6 rounded-xl text-center shadow-lg border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold">Free</h3>
-                <p className="text-3xl sm:text-4xl font-bold mt-2">
-                  $0<span className="text-sm font-normal"> /1 month</span>
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  You can make queries only with this plan.
-                </p>
-                <ul className="mt-4 space-y-2 text-sm text-gray-500 dark:text-gray-400 text-left">
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>{" "}
-                  {/* Added extra item to test overflow */}
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>
-                </ul>
-                <button className="mt-6 w-full bg-transparent text-gray-900 dark:text-white py-2 rounded-md border border-gray-400 dark:border-gray-500 font-medium">
-                  Your Current Plan
-                </button>
+    <CommonWrapper className="">
+      <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CommonBorder className="min-w-[340px]">
+            <div>
+              <div className="w-full flex items-center justify-between pb-8">
+                <CommonHeader size="md">Free</CommonHeader>
+                <div className="flex">
+                  <CommonHeader size="3xl">$0</CommonHeader>
+                  <CommonHeader className="self-end" size="gray">
+                    /1 month
+                  </CommonHeader>
+                </div>
               </div>
+              <CommonHeader size="gray" className="dark:text-gray-400">
+                You can make queries only with this plan.
+              </CommonHeader>
+              <Separator />
 
-              {/* Pro Plan */}
-              <div className="border p-6 rounded-xl text-center shadow-lg border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold">Pro</h3>
-                <p className="text-3xl sm:text-4xl font-bold mt-2">
-                  $19<span className="text-sm font-normal"> /per month</span>
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  You can make queries only with this plan.
-                </p>
-                <ul className="mt-4 space-y-2 text-sm text-gray-500 dark:text-gray-400 text-left">
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>{" "}
-                  {/* Added extra item to test overflow */}
-                  <li>✓ Your plan specification will show here.</li>
-                  <li>✓ Your plan specification will show here.</li>
-                </ul>
-                <button className="mt-6 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 font-medium cursor-pointer">
-                  Purchase Now
-                </button>
+              <div className="space-y-3 text-sm text-gray-500 dark:text-gray-400 text-left pb-8">
+                {planSpecifications.map((spec, index) => (
+                  <CommonHeader size="gray" key={index}>
+                    ✓ {spec}
+                  </CommonHeader>
+                ))}
               </div>
             </div>
+            <CommonButton
+              size="lg"
+              variant="secondary"
+              className="w-full  dark:border-gray-500 font-medium"
+            >
+              Your Current Plan
+            </CommonButton>
+          </CommonBorder>
 
-            {/* Go Back Button */}
-            <div className="text-center p-4">
-              <button
-                onClick={() => setOpen(false)}
-                className="px-4 py-1 border border-gray-400 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-300 rounded-md hover:text-black hover:border-black dark:hover:text-white dark:hover:border-white cursor-pointer"
-              >
-                Go Back
-              </button>
+          {/* Pro Plan */}
+          <CommonBorder className="min-w-[340px]">
+            <div>
+              <div className="w-full flex items-center justify-between pb-8">
+                <CommonHeader size="md">Pro</CommonHeader>
+                <div className="flex">
+                  <CommonHeader size="3xl">$19</CommonHeader>
+                  <CommonHeader className="self-end" size="gray">
+                    /1 month
+                  </CommonHeader>
+                </div>
+              </div>
+              <CommonHeader size="gray" className="dark:text-gray-400">
+                You can make queries only with this plan.
+              </CommonHeader>
+              <Separator />
+
+              <div className="space-y-3 text-sm text-gray-500 dark:text-gray-400 text-left pb-8">
+                {planSpecifications.map((spec, index) => (
+                  <CommonHeader size="gray" key={index}>
+                    ✓ {spec}
+                  </CommonHeader>
+                ))}
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+            <CommonButton
+              size="lg"
+              variant="primary"
+              className="w-full cursor-pointer  dark:border-gray-500 font-medium"
+            >
+              Purchase Now
+            </CommonButton>
+          </CommonBorder>
+        </div>
 
-      {/* Dropdown Menu Item */}
-      <DropdownMenuItem
-        onClick={(e) => {
-          e.preventDefault();
-          setOpen(true);
-        }}
-        className="flex items-center gap-2 text-green-600 hover:text-green-700 cursor-pointer"
-      >
-        <CreditCard className="h-4 w-4" />
-        Subscription
-      </DropdownMenuItem>
-    </div>
+        <div className="text-center mt-6">
+          <CommonButton onClick={handleClose} variant="secondary" className="">
+            Go Back
+          </CommonButton>
+        </div>
+      </div>
+    </CommonWrapper>
   );
 };
 
