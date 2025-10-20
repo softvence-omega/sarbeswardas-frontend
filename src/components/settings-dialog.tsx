@@ -1,39 +1,82 @@
 "use client";
-import React, { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Settings } from "lucide-react";
-import Image from "next/image";
-import editIcon from "../../public/images/edit-icon.png";
 import { useLogoutFromAllDevicesMutation } from "@/store/api/authApi";
-import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
 import { removeToken } from "@/store/api/AuthState";
+import {
+  useGetProfileQuery,
+  useUpdateProfileImageMutation,
+  useUpdateProfileNameMutation,
+} from "@/store/api/profileApi";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
+import { useForm } from "react-hook-form";
+import { CiEdit } from "react-icons/ci";
+import { PiExportThin } from "react-icons/pi";
+import { useDispatch } from "react-redux";
+import { z } from "zod";
+import user from "../../public/user.jpg";
+import AlertBox from "./AlertBox";
+import CommonButton from "./common/button/CommonButton";
+import ButtonWithLoading from "./common/custom/ButtonWithLoading";
+import CommonBorder from "./common/custom/CommonBorder";
+import CommonHeader from "./common/header/CommonHeader";
+import CommonWrapper from "./common/space/CommonWrapper";
+import Separator from "./common/space/Separator";
+import FormHeader from "./reuseable/FormHeader";
 
-const SettingsDialog = () => {
-  const [open, setOpen] = useState(false);
+const tabs = [
+  { id: "account", label: "Account", activeColor: "bg-[#212B36]" },
+  { id: "security", label: "Security", activeColor: "bg-[#212B36]" },
+];
+
+const profileSchema = z.object({
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  image: z
+    .instanceof(File)
+    .optional()
+    .refine((file) => !file || file.size <= 2 * 1024 * 1024, {
+      message: "Image must be less than 2MB",
+    }),
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
+
+interface SettingsDialogProps {
+  handleClose: () => void;
+}
+
+const SettingsDialog: FC<SettingsDialogProps> = ({ handleClose }) => {
   const [tab, setTab] = useState("account");
   const [editFullName, setEditFullName] = useState(false);
-  const [editEmail, setEditEmail] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
-  const [fullName, setFullName] = useState("Brooklyn Richard");
-  const [email, setEmail] = useState("mohibulla@gmail.com");
-  const [password, setPassword] = useState("••••••••");
+  const [preview, setPreview] = useState<string | null>(null);
 
-  const handleEditClick = (field: string) => {
-    if (field === "fullName") setEditFullName(!editFullName);
-    if (field === "email") setEditEmail(!editEmail);
-    if (field === "password") setEditPassword(!editPassword);
+  const {
+    register,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      fullName: " ",
+    },
+  });
+
+  const handleEditClick = () => setEditFullName(!editFullName);
+  const handlePasswordClick = () => setEditPassword(!editPassword);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setValue("image", file);
+      setPreview(URL.createObjectURL(file));
+    }
   };
 
   const [logoutFromAllDevices, { isLoading }] =
     useLogoutFromAllDevicesMutation();
-
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -42,173 +85,218 @@ const SettingsDialog = () => {
     dispatch(removeToken());
     router.push("/login");
   };
+
+  const inputClass = {
+    input:
+      "w-full px-4 py-3 text-sm leading-[22px] rounded-lg  border border-[#DFE3E8] dark:border-[#212B36] bg-[#F4F6F8] dark:bg-[#161C24] text-[#919EAB] dark:text-[#637381]  cursor-pointer transition outline-none",
+    label:
+      "text-sm leading-[22px] text-[#212B36] dark:text-[#DFE3E8] mb-1 block",
+    error: "text-red-500 text-xs mt-1",
+  };
+
+  const [updateProfileImage] = useUpdateProfileImageMutation();
+  const [updateProfileName] = useUpdateProfileNameMutation();
+  const currentFullName = watch("fullName");
+  const currentImage = watch("image");
+
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+
+      if (currentFullName && currentFullName.trim() !== "") {
+        await updateProfileName({ fullName: currentFullName }).unwrap();
+      }
+
+      if (currentImage && currentImage.size > 0) {
+        await updateProfileImage(currentImage).unwrap();
+      }
+    } catch (error) {
+      console.error(" Profile update failed:", error);
+    } finally {
+      setLoading(false);
+      handleClose();
+    }
+  };
+
+  const { data: profile } = useGetProfileQuery();
+
   return (
     <div>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-xl border bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-center">
-              Settings
-            </DialogTitle>
-          </DialogHeader>
+      <CommonWrapper>
+        <CommonBorder className="sm:min-w-[450px]">
+          <FormHeader title="Settings" handleClose={handleClose} />
 
-          <div className="w-full">
-            {/* Custom Tab Buttons */}
-            <div className="flex w-full">
-              <button
-                onClick={() => setTab("account")}
-                className={`flex-1 py-2 text-sm font-medium rounded-md ${
-                  tab === "account"
-                    ? "bg-green-600 text-white"
-                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-                }`}
-              >
-                Account
-              </button>
-              <button
-                onClick={() => setTab("security")}
-                className={`flex-1 py-2 text-sm font-medium rounded-md ${
-                  tab === "security"
-                    ? "bg-green-600 text-white"
-                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-                }`}
-              >
-                Security
-              </button>
+          <div className="pt-6">
+            <div className="flex gap-2">
+              {tabs.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setTab(item.id)}
+                  className={`px-3 py-1 text-base leading-[24px] rounded-md cursor-pointer transition ${
+                    tab === item.id
+                      ? `${item.activeColor} text-white`
+                      : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
             </div>
 
-            {/* Account Content */}
+            <Separator marginY="my-4.5" />
+
             {tab === "account" && (
-              <div className="p-4 space-y-4">
+              <form>
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Update Picture:</label>
-                  <div className="relative">
+                  <CommonHeader>Update Picture:</CommonHeader>
+                  <div className="relative w-10 h-10 cursor-pointer">
                     <Image
-                      src="/images/logout-icon.png"
+                      src={preview || profile?.data?.profileImage || user}
                       alt="profile"
-                      width={40}
-                      height={40}
-                      className="rounded-full"
+                      fill
+                      className="rounded-md object-cover cursor-pointer"
+                    />
+
+                    <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.3)_0%,rgba(0,0,0,0.3)_100%),_#212B36] rounded-md flex items-center justify-center pointer-events-none" />
+
+                    <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <PiExportThin size={20} className="text-white" />
+                    </span>
+
+                    <input
+                      type="file"
+                      accept="image/*"
+                      {...register("image")}
+                      onChange={handleImageChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer rounded-md"
                     />
                   </div>
                 </div>
 
+                {errors.image && (
+                  <p className={inputClass.error}>{errors.image.message}</p>
+                )}
+                <Separator marginY="my-6" />
+
+                {/* Full Name */}
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Full Name:</label>
+                  <CommonHeader>Full Name:</CommonHeader>
                   <div className="flex items-center gap-2">
                     {editFullName ? (
                       <input
                         type="text"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 p-1 rounded-md w-40"
+                        {...register("fullName")}
+                        className={` ${inputClass.input} placeholder:!text-[#637381]`}
+                        placeholder="Type your Name"
+                        value={currentFullName || profile?.data?.fullName || ""}
+                        onChange={(e) => setValue("fullName", e.target.value)}
                       />
                     ) : (
-                      <span className="text-gray-600 dark:text-gray-400">
-                        {fullName}
-                      </span>
+                      <CommonHeader size="gray">
+                        {profile?.data?.fullName || ""}
+                      </CommonHeader>
                     )}
                     <button
-                      onClick={() => handleEditClick("fullName")}
-                      className="text-sm"
+                      type="button"
+                      onClick={handleEditClick}
+                      className="text-xl cursor-pointer"
                     >
-                      <Image src={editIcon} alt="edit" width={20} height={20} />
+                      <CiEdit />
                     </button>
                   </div>
                 </div>
+                {errors.fullName && (
+                  <p className={inputClass.error}>{errors.fullName.message}</p>
+                )}
+                <Separator marginY="my-4.5" />
 
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Email Address:</label>
-                  <div className="flex items-center gap-2">
-                    {editEmail ? (
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 p-1 rounded-md w-40"
-                      />
-                    ) : (
-                      <span className="text-gray-600 dark:text-gray-400">
-                        {email}
-                      </span>
-                    )}
-                    <button
-                      onClick={() => handleEditClick("email")}
-                      className="text-sm"
-                    >
-                      <Image src={editIcon} alt="edit" width={20} height={20} />
-                    </button>
-                  </div>
+                  <CommonHeader>Email Address:</CommonHeader>
+                  <CommonHeader size="gray">maramjan@gmail.com</CommonHeader>
                 </div>
 
+                <Separator marginY="my-4.5" />
+
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Delete account</label>
-                  <button className="text-red-600 dark:text-red-400 py-1 px-3 rounded-md text-sm border border-red-500 hover:bg-red-50 dark:hover:bg-red-950">
+                  <CommonHeader>Delete account</CommonHeader>
+                  <CommonButton
+                    type="button"
+                    className="!border-[#FF4842]"
+                    variant="outline"
+                  >
                     Delete Account
-                  </button>
+                  </CommonButton>
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-                  <span className="mr-2">ⓘ</span> This will change your whole
-                  interface.
-                </p>
-              </div>
+
+                <Separator marginY="my-4.5" />
+                <AlertBox title="This will change your whole interface." />
+
+                <div className="text-right pt-4.5">
+                  <CommonButton
+                    onClick={handleSubmit}
+                    variant="secondary"
+                    type="button"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <ButtonWithLoading title="Updating..." />
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </CommonButton>
+                </div>
+              </form>
             )}
 
-            {/* Security Content */}
             {tab === "security" && (
-              <div className="p-4 space-y-4">
+              <div>
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Password:</label>
+                  <CommonHeader>Password:</CommonHeader>
                   <div className="flex items-center gap-2">
                     {editPassword ? (
                       <input
                         type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 p-1 rounded-md w-40"
+                        className={inputClass.input}
+                        placeholder="Type new Password"
                       />
                     ) : (
-                      <span className="text-gray-600 dark:text-gray-400">
-                        {password}
-                      </span>
+                      <CommonHeader size="gray">********</CommonHeader>
                     )}
                     <button
-                      onClick={() => handleEditClick("password")}
-                      className="text-sm"
+                      type="button"
+                      onClick={handlePasswordClick}
+                      className="text-xl cursor-pointer"
                     >
-                      <Image src={editIcon} alt="edit" width={20} height={20} />
+                      <CiEdit />
                     </button>
                   </div>
                 </div>
 
+                <Separator marginY="my-4.5" />
+
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">
-                    Log out of all devices
-                  </label>
-                  <button
+                  <CommonHeader>Log out of all devices</CommonHeader>
+
+                  <CommonButton
+                    type="button"
+                    className="!border-[#FF4842]"
+                    variant="outline"
                     disabled={isLoading}
                     onClick={handleLogout}
-                    className="text-red-600 dark:text-red-400 py-1 px-3 rounded-md text-sm border border-red-500 hover:bg-red-50 dark:hover:bg-red-950 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Log Out
-                  </button>
+                  </CommonButton>
                 </div>
+
+                <Separator marginY="my-4.5" />
+                <AlertBox title="This will log you out of all devices." />
               </div>
             )}
           </div>
-        </DialogContent>
-      </Dialog>
-
-      <DropdownMenuItem
-        onClick={(e) => {
-          e.preventDefault();
-          setOpen(true);
-        }}
-        className="flex items-center gap-2 text-green-600 hover:text-green-700 cursor-pointer"
-      >
-        <Settings className="h-4 w-4" />
-        Settings
-      </DropdownMenuItem>
+        </CommonBorder>
+      </CommonWrapper>
     </div>
   );
 };

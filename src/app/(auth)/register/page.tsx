@@ -1,18 +1,20 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import googleIcon from "../../../../public/images/google-icon.png";
-import { useSignUpMutation } from "@/store/api/authApi";
-import { useRouter } from "next/navigation";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { FiEye, FiEyeOff } from "react-icons/fi";
 import AuthRedirect from "@/components/AuthRedirect";
+import CommonButton from "@/components/common/button/CommonButton";
+import ButtonWithLoading from "@/components/common/custom/ButtonWithLoading";
+import CommonHeader from "@/components/common/header/CommonHeader";
+import { useSignUpMutation } from "@/store/api/authApi";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+import { z } from "zod";
+import googleIcon from "../../../../public/images/google-icon.png";
 
 // Zod schema
 const registerSchema = z
@@ -29,7 +31,12 @@ const registerSchema = z
 
 // TypeScript type
 type RegisterFormData = z.infer<typeof registerSchema>;
-
+const inputClass = {
+  input:
+    "w-full px-4 py-3 text-sm leading-[22px] rounded-lg  border border-[#DFE3E8] dark:border-[#212B36] bg-[#F4F6F8] dark:bg-[#161C24] text-[#919EAB] dark:text-[#637381]  cursor-pointer transition outline-none",
+  label: "text-sm leading-[22px] text-[#212B36] dark:text-[#DFE3E8] mb-1 block",
+  error: "text-red-500 text-xs mt-1",
+};
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
@@ -83,9 +90,14 @@ const SignUpPage = () => {
             className="object-cover h-full w-full"
           />
           <div className="absolute bottom-6 left-6 text-white text-lg font-semibold max-w-xs">
-            <div className="flex items-center gap-3">
-              <div className="w-1 h-12 bg-green-500 rounded-full" />
-              <p className="leading-tight">Join us and explore all features.</p>
+            <div className="flex items-stretch gap-3">
+              <div className="w-3 bg-green-500 rounded-full" />
+              <CommonHeader
+                size="2xl"
+                className="flex items-center dark:text-white"
+              >
+                Join us and explore all features.
+              </CommonHeader>
             </div>
           </div>
         </div>
@@ -93,62 +105,49 @@ const SignUpPage = () => {
         {/* Form */}
         <div className="w-full md:w-1/2 p-6 sm:p-10 flex flex-col justify-center">
           <div className="mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+            <CommonHeader size="2xl" className=" dark:text-white">
               Create your account
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm sm:text-base">
+            </CommonHeader>
+            <CommonHeader className="!text-[#DFE3E8] mt-1">
               Get started in minutes.
-            </p>
+            </CommonHeader>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Full Name */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
             <div>
-              <label className="block mb-1 text-gray-700 dark:text-gray-300 text-sm font-medium">
-                Full Name
-              </label>
+              <label className={inputClass.label}>Full Name</label>
               <input
                 type="text"
                 placeholder="Your full name"
                 {...register("fullName")}
-                className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                className={inputClass.input}
               />
               {errors.fullName && (
-                <p className="text-xs text-red-500 mt-1">
-                  {errors.fullName.message}
-                </p>
+                <p className={inputClass.error}>{errors.fullName.message}</p>
               )}
             </div>
 
-            {/* Email */}
             <div>
-              <label className="block mb-1 text-gray-700 dark:text-gray-300 text-sm font-medium">
-                Email
-              </label>
+              <label className={inputClass.label}>Email</label>
               <input
                 type="email"
                 placeholder="example@email.com"
                 {...register("email")}
-                className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                className={inputClass.input}
               />
               {errors.email && (
-                <p className="text-xs text-red-500 mt-1">
-                  {errors.email.message}
-                </p>
+                <p className={inputClass.error}>{errors.email.message}</p>
               )}
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block mb-1 text-gray-700 dark:text-gray-300 text-sm font-medium">
-                Password
-              </label>
+              <label className={inputClass.label}>Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Type your password"
                   {...register("password")}
-                  className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                  className={inputClass.input}
                 />
                 <button
                   type="button"
@@ -167,23 +166,18 @@ const SignUpPage = () => {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-red-500 mt-1">
-                  {errors.password.message}
-                </p>
+                <p className={inputClass.error}>{errors.password.message}</p>
               )}
             </div>
 
-            {/* Confirm Password */}
             <div>
-              <label className="block mb-1 text-gray-700 dark:text-gray-300 text-sm font-medium">
-                Confirm Password
-              </label>
+              <label className={inputClass.label}>Confirm Password</label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm your password"
                   {...register("confirmPassword")}
-                  className="w-full px-4 py-2 border rounded-lg border-green-500 dark:border-green-400 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+                  className={inputClass.input}
                 />
                 <button
                   type="button"
@@ -202,22 +196,25 @@ const SignUpPage = () => {
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-xs text-red-500 mt-1">
+                <p className={inputClass.error}>
                   {errors.confirmPassword.message}
                 </p>
               )}
             </div>
 
-            {/* Submit */}
-            <Button
+            <CommonButton
               type="submit"
+              size="lg"
               disabled={isLoading}
-              className="cursor-pointer w-full bg-green-600 hover:bg-green-500 text-white mt-2 rounded-lg py-2 text-lg"
+              className="w-full mt-4"
             >
-              Register
-            </Button>
+              {isLoading ? (
+                <ButtonWithLoading title="Processing..." />
+              ) : (
+                "Register"
+              )}
+            </CommonButton>
 
-            {/* Login Link */}
             <p className="text-center text-gray-600 dark:text-gray-400 text-sm mt-3">
               Already have an account?{" "}
               <Link
@@ -228,14 +225,13 @@ const SignUpPage = () => {
               </Link>
             </p>
 
-            {/* Or login with */}
             <div className="mt-4">
               <p className="text-center text-gray-600 dark:text-gray-400 text-sm mb-2">
                 Or continue with
               </p>
               <button
                 type="button"
-                className="flex items-center justify-center gap-2 border rounded-lg w-full py-2 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white hover:shadow-md transition"
+                className="flex items-center justify-center gap-2 border rounded-lg w-full py-3 bg-white dark:bg-[#0B0D12] text-gray-900 dark:text-white hover:shadow-md transition cursor-pointer"
               >
                 <Image src={googleIcon} alt="Google" width={70} height={70} />
               </button>

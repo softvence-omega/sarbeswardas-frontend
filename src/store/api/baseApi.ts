@@ -1,9 +1,9 @@
 import {
-  createApi,
-  fetchBaseQuery,
-  FetchArgs,
-  FetchBaseQueryError,
   BaseQueryApi,
+  createApi,
+  FetchArgs,
+  fetchBaseQuery,
+  FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import { toast } from "react-toastify";
 
@@ -30,7 +30,7 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithToast = async (
   args: string | FetchArgs,
   api: BaseQueryApi,
-  extraOptions: object // ✅ Correct type
+  extraOptions: object
 ) => {
   const result = await baseQuery(args, api, extraOptions);
 
@@ -40,14 +40,18 @@ const baseQueryWithToast = async (
       ? args.method?.toUpperCase()
       : "GET";
 
-  // Success toast for POST, PUT, DELETE
-  if (result.data && ["POST", "PUT", "DELETE"].includes(method ?? "")) {
+  if (
+    result.data &&
+    ["POST", "PUT", "DELETE", "PATCH"].includes(method ?? "")
+  ) {
     const message = (result.data as ApiResponseMessage)?.message;
     if (message) toast.success(message);
   }
 
-  // Error toast for POST, PUT, DELETE
-  if (result.error && ["POST", "PUT", "DELETE"].includes(method ?? "")) {
+  if (
+    result.error &&
+    ["POST", "PUT", "DELETE", "PATCH"].includes(method ?? "")
+  ) {
     const errorData = result.error as FetchBaseQueryError & {
       data?: ApiResponseMessage;
     };
@@ -58,10 +62,9 @@ const baseQueryWithToast = async (
   return result;
 };
 
-// Create the API
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithToast,
   endpoints: () => ({}),
-  tagTypes: [],
+  tagTypes: ["Profile"],
 });

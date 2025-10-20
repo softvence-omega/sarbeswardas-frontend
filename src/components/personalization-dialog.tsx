@@ -1,15 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { LogOut } from "lucide-react";
-import { useTheme } from "next-themes";
 import {
   Select,
   SelectContent,
@@ -17,84 +7,87 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTheme } from "next-themes";
+import AlertBox from "./AlertBox";
+import CommonButton from "./common/button/CommonButton";
+import CommonBorder from "./common/custom/CommonBorder";
+import CommonHeader from "./common/header/CommonHeader";
+import CommonWrapper from "./common/space/CommonWrapper";
+import Separator from "./common/space/Separator";
+import FormHeader from "./reuseable/FormHeader";
 
-const PersonalizationDialog = () => {
-  const [open, setOpen] = useState(false);
+interface Props {
+  handleClose: () => void;
+}
+const PersonalizationDialog: React.FC<Props> = ({ handleClose }) => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div>
-      {/* Dialog */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="text-lg text-center font-semibold">
-              Personalization
-            </DialogTitle>
-          </DialogHeader>
+    <CommonWrapper className="">
+      <CommonBorder className="sm:min-w-[380px] pointer-events-auto">
+        <div className="space-y-4.5">
+          <FormHeader title="Personalization" handleClose={handleClose} />
+          <Separator marginY="4.5" />
 
-          {/* Dialog Body */}
-          <div className="p-4 space-y-4">
-            {/* Theme Selector */}
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Theme:</label>
-              <Select
-                value={theme === "system" ? "system" : theme}
-                onValueChange={(val) => setTheme(val)}
-              >
-                <SelectTrigger className="w-[140px] cursor-pointer">
-                  <SelectValue placeholder="Select Theme" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Language Selector */}
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Language:</label>
-              <Select defaultValue="en">
-                <SelectTrigger className="w-[140px] cursor-pointer">
-                  <SelectValue placeholder="Select Language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="bn">Bangla</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="flex items-center justify-between">
+            <CommonHeader>Theme</CommonHeader>
+            <Select
+              value={theme === "system" ? "system" : theme}
+              onValueChange={(val) => setTheme(val)}
+            >
+              <SelectTrigger className="w-[140px] cursor-pointer text-white">
+                <SelectValue placeholder="Select Theme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem className=" cursor-pointer" value="light">
+                  Light
+                </SelectItem>
+                <SelectItem className=" cursor-pointer" value="dark">
+                  Dark
+                </SelectItem>
+                <SelectItem className=" cursor-pointer" value="system">
+                  System
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Dialog Footer */}
-          <div className="flex justify-center gap-3 mt-4">
-            <button className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 cursor-pointer">
+          {/* Language Selector */}
+          <div className="flex items-center justify-between">
+            <CommonHeader>Language</CommonHeader>
+            <Select defaultValue="en">
+              <SelectTrigger className="w-[140px] cursor-pointer text-white">
+                <SelectValue placeholder="Select Language" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem className=" cursor-pointer" value="en">
+                  English
+                </SelectItem>
+                <SelectItem className=" cursor-pointer" value="bn">
+                  Bangla
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <AlertBox title="This will change your whole interface." />
+
+          {/* Buttons */}
+          <div className="flex justify-center gap-4.5">
+            <CommonButton onClick={handleClose} className="cursor-pointer">
               Save
-            </button>
-            <button
-              onClick={() => setOpen(false)}
-              className="w-full border py-2 rounded-md border-gray-500 dark:text-white cursor-pointer"
+            </CommonButton>
+            <CommonButton
+              variant="secondary"
+              onClick={handleClose}
+              className="cursor-pointer"
             >
               Cancel
-            </button>
+            </CommonButton>
           </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Dropdown Menu Item */}
-      <DropdownMenuItem
-        onClick={(e) => {
-          e.preventDefault();
-          setOpen(true);
-        }}
-        className="flex items-center gap-2 text-green-600 hover:text-green-700 cursor-pointer "
-      >
-        <LogOut className="h-4 w-4" />
-        Personalization
-      </DropdownMenuItem>
-    </div>
+        </div>
+      </CommonBorder>
+    </CommonWrapper>
   );
 };
 
