@@ -1,21 +1,16 @@
 "use client";
-import React, { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { LogOut } from "lucide-react";
-import logoutIcon from "../../public/images/logout.png";
-import logoutVector from "../../public/images/logout-icon.png";
-import Image from "next/image";
-import { useDispatch } from "react-redux";
 import { removeToken } from "@/store/api/AuthState";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-const LogoutDialog = () => {
-  const [open, setOpen] = useState(false);
+import { useDispatch } from "react-redux";
+import logoutIcon from "../../public/images/logout.png";
+import AlertBox from "./AlertBox";
+import CommonButton from "./common/button/CommonButton";
+import CommonBorder from "./common/custom/CommonBorder";
+import CommonHeader from "./common/header/CommonHeader";
+import CommonWrapper from "./common/space/CommonWrapper";
+import FormHeader from "./reuseable/FormHeader";
+const LogoutDialog = ({ handleClose }: { handleClose: () => void }) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -24,50 +19,29 @@ const LogoutDialog = () => {
     router.push("/login");
   };
   return (
-    <div>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className="text-lg text-center font-semibold">
-              Log Out
-            </DialogTitle>
-          </DialogHeader>
+    <CommonWrapper className="">
+      <CommonBorder className="sm:min-w-[350px] pointer-events-auto">
+        <FormHeader handleClose={handleClose} />
+
+        <div className=" space-y-6 pt-6">
+          <CommonHeader className=" !text-center" size="xl">
+            Log Out
+          </CommonHeader>
           <div className="flex items-center justify-center">
             <Image src={logoutIcon} alt="logout" />
           </div>
-          <div className="p-3 mb-2 flex items-center gap-2 rounded-xl text-sm bg-background dark:bg-[#212B36]">
-            <Image src={logoutVector} alt="logout" />
-
-            <span>You will be log out from the site.</span>
-          </div>
-
-          <div className="flex justify-center gap-3">
-            <button
-              onClick={handleLogout}
-              className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700  cursor-pointer"
-            >
+          <AlertBox title="You will be log out from the site." />
+          <div className="flex justify-center gap-6">
+            <CommonButton variant="danger" onClick={handleLogout} className="">
               Log Out
-            </button>
-            <button
-              onClick={() => setOpen(false)}
-              className="w-full  text-white-800 border py-2 rounded-md border-gray-500 cursor-pointer"
-            >
+            </CommonButton>
+            <CommonButton onClick={handleClose} variant="outline" className="">
               Cancel
-            </button>
+            </CommonButton>
           </div>
-        </DialogContent>
-      </Dialog>
-      <DropdownMenuItem
-        onClick={(e) => {
-          e.preventDefault();
-          setOpen(true);
-        }}
-        className="flex items-center gap-2 text-red-600 hover:text-red-700 cursor-pointer"
-      >
-        <LogOut className="h-4 w-4" />
-        Log Out
-      </DropdownMenuItem>
-    </div>
+        </div>
+      </CommonBorder>
+    </CommonWrapper>
   );
 };
 
