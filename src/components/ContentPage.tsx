@@ -1,74 +1,80 @@
-"use client"
-import React, { useState } from "react"
-import { Button } from "@/components/ui/button"
+"use client";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { HiOutlinePlusCircle } from "react-icons/hi";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
+  Bot,
   Copy,
   FileText,
   Share2,
   ThumbsDown,
   ThumbsUp,
-  Wand2,
-  Bot,
   User,
-} from "lucide-react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+  Wand2,
+} from "lucide-react";
+import { useState } from "react";
+import { TbArrowDownToArc } from "react-icons/tb";
+import CommonButton from "./common/button/CommonButton";
+import CommonHeader from "./common/header/CommonHeader";
 
 const ContentPage = () => {
-  const [inputValue, setInputValue] = useState("")
+  const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState<
     { role: "user" | "ai"; content: string }[]
-  >([])
-  const [isGenerating, setIsGenerating] = useState(false)
+  >([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = async () => {
-    if (!inputValue.trim()) return
-    const userMessage = { role: "user" as const, content: inputValue }
-    setMessages((prev) => [...prev, userMessage])
-    setInputValue("")
-    setIsGenerating(true)
+    if (!inputValue.trim()) return;
+    const userMessage = { role: "user" as const, content: inputValue };
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+    setIsGenerating(true);
 
     // Example AI response (replace with API stream later)
-    const responseText = `Here’s a 3-day NYC itinerary that balances iconic landmarks, local experiences, food, and walkable neighborhoods.`
+    const responseText = `Here’s a 3-day NYC itinerary that balances iconic landmarks, local experiences, food, and walkable neighborhoods.`;
 
-    let i = 0
-    let temp = ""
-    setMessages((prev) => [...prev, { role: "ai", content: "" }])
+    let i = 0;
+    let temp = "";
+    setMessages((prev) => [...prev, { role: "ai", content: "" }]);
     const interval = setInterval(() => {
-      temp += responseText[i]
-      i++
+      temp += responseText[i];
+      i++;
       if (i >= responseText.length) {
-        clearInterval(interval)
-        setIsGenerating(false)
+        clearInterval(interval);
+        setIsGenerating(false);
       }
       setMessages((prev) => {
-        const lastIdx = prev.length - 1
+        const lastIdx = prev.length - 1;
         return prev.map((msg, idx) =>
-          idx === lastIdx && msg.role === "ai"
-            ? { ...msg, content: temp }
-            : msg
-        )
-      })
-    }, 20)
-  }
+          idx === lastIdx && msg.role === "ai" ? { ...msg, content: temp } : msg
+        );
+      });
+    }, 20);
+  };
 
   const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text)
-    alert("Copied to clipboard!")
-  }
+    navigator.clipboard.writeText(text);
+    alert("Copied to clipboard!");
+  };
 
   return (
     <div className="flex h-full flex-col items-center justify-center p-4 gap-6">
       {/* Header */}
       {messages.length === 0 ? (
-        <h1 className="text-2xl md:text-3xl md:max-w-[500px] font-bold text-foreground text-center">
+        <CommonHeader
+          size="2xl"
+          className="font-bold md:max-w-[500px]  text-foreground !text-center"
+        >
           Every perspective, every AI, one place.
-        </h1>
+        </CommonHeader>
       ) : (
         <div className="w-full max-w-3xl border border-border rounded-xl  whitespace-pre-wrap text-foreground leading-relaxed bg-background">
           <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
@@ -157,36 +163,61 @@ const ContentPage = () => {
       )}
 
       {/* Textarea Container */}
-      <div className="relative w-full max-w-3xl bg-sidebar dark:bg-card p-6 rounded-xl  border border-border">
+      <div className="relative shadow-[0_8px_16px_0_rgba(107,115,123,0.16)] w-full max-w-3xl bg-sidebar dark:bg-card p-6 rounded-xl  border border-border">
         <textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          className="w-full bg-background  text-foreground p-3 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-500 text-lg"
+          className="w-full bg-background  text-foreground p-3 rounded-lg resize-none outline-none text-lg"
           rows={2}
           placeholder="Type your query here..."
         />
 
-        {/* Bottom Actions */}
         <div className="flex justify-between items-center mt-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                <span className="mr-2">Mode</span>
-                <span className="ml-1">ⓘ</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-popover text-popover-foreground">
-              <DropdownMenuItem className="hover:bg-accent hover:text-accent-foreground">
-                Query
-              </DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-accent hover:text-accent-foreground">
-                Create Image
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button
-            className="bg-green-600 text-white hover:bg-green-700 rounded-md px-4 py-2 flex items-center"
+          <div className="flex gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div>
+                  <CommonButton
+                    variant="secondary"
+                    className="flex items-center !px-1 !py-1  !rounded-full"
+                  >
+                    <HiOutlinePlusCircle className=" h-6 w-6 " />
+                  </CommonButton>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-popover text-popover-foreground">
+                <DropdownMenuItem className="hover:bg-accent hover:text-accent-foreground">
+                  Query
+                </DropdownMenuItem>
+                <DropdownMenuItem className="hover:bg-accent hover:text-accent-foreground">
+                  Create Image
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div>
+                  <CommonButton
+                    variant="secondary"
+                    className="flex items-center !rounded-full"
+                  >
+                    <TbArrowDownToArc className="mr-2 h-4 w-4" />
+                    Specification
+                  </CommonButton>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-popover text-popover-foreground">
+                <DropdownMenuItem className="hover:bg-accent hover:text-accent-foreground">
+                  Query
+                </DropdownMenuItem>
+                <DropdownMenuItem className="hover:bg-accent hover:text-accent-foreground">
+                  Create Image
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <CommonButton
+            className="flex !py-3"
             onClick={handleGenerate}
             disabled={isGenerating}
           >
@@ -197,11 +228,11 @@ const ContentPage = () => {
                 Generate <Wand2 className="ml-2 h-4 w-4" />
               </>
             )}
-          </Button>
+          </CommonButton>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ContentPage
+export default ContentPage;
