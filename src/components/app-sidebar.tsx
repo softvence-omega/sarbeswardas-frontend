@@ -1,47 +1,48 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import {
-  LogOut,
-  PlusCircle,
-  Search,
-  MessageSquare,
-  MoreVertical,
-} from "lucide-react"
+import { MoreVertical, PlusCircle, Search } from "lucide-react";
+import * as React from "react";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
   SidebarGroup,
   SidebarGroupContent,
-} from "@/components/ui/sidebar"
+  SidebarHeader,
+  SidebarRail,
+} from "@/components/ui/sidebar";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import ShareDialog from "./share-dialog"
-import RenameDialog from "./rename-dialog"
-import DeleteDialog from "./delete-dialog"
-import Image from "next/image"
-import lightLogo from "../../public/images/logo-light.jpeg"
-import darkLogo from "../../public/images/logo-dark.jpeg"
-import { useTheme } from "next-themes"
-
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { removeToken } from "@/store/api/AuthState";
+import { useGetProfileQuery } from "@/store/api/profileApi";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import textGray from "../../public/images/grayText.svg";
+import darkLogo from "../../public/images/logoDark.png";
+import lightLogo from "../../public/images/logoLight.png";
+import text from "../../public/images/text.svg";
+import CommonButton from "./common/button/CommonButton";
+import CommonBorder from "./common/custom/CommonBorder";
+import CommonHeader from "./common/header/CommonHeader";
+import DeleteDialog from "./delete-dialog";
+import RenameDialog from "./rename-dialog";
+import ShareDialog from "./share-dialog";
+import SubscriptionDropdownItem from "./subscription-dialog";
 export function AppSidebar() {
-  const { theme } = useTheme()
-    const [mounted, setMounted] = React.useState(false)
+  const { theme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
-    setMounted(true) // client mount হয়ে গেলে mounted true হবে
-  }, [])
+    setMounted(true);
+  }, []);
   const recentItems = [
     "What is ui ux design?",
     "Can you write me...",
@@ -49,148 +50,180 @@ export function AppSidebar() {
     "Can you discus...",
     "Can you discus...",
     "Can you discus...",
-  ]
+  ];
 
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    dispatch(removeToken());
+    router.push("/login");
+  };
+
+  const [open, setOpen] = React.useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const { data: profile } = useGetProfileQuery();
   return (
-    <Sidebar collapsible="offcanvas" className="bg-background text-foreground">
-      {/* Header */}
-      <SidebarHeader className="p-3 border rounded-lg border-dashed">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <div className="flex flex-col gap-5">
-              {/* Sidebar Logo + Info */}
-              <div className="flex items-center justify-between">
-                <div className="p-5 border border-border bg-card rounded-2xl">
-                  <div className="flex items-start gap-3">
-                  {mounted ? (
-          theme === "dark" ? (
-            <Image src={darkLogo} alt="Logo" className="w-auto object-contain" />
-          ) : (
-            <Image src={lightLogo} alt="Logo" className="w-auto object-contain" />
-          )
-        ) : (
-          <div className="w-24 h-10 bg-gray-300 dark:bg-gray-700 animate-pulse rounded" />
-        )}
-                  </div>
+    <>
+      <Sidebar
+        collapsible="offcanvas"
+        className="bg-background text-foreground "
+      >
+        <SidebarHeader className="p-3">
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <div className="flex flex-col gap-5">
+                <div className="flex items-center justify-between">
+                  <div className="p-3 border border-border bg-card rounded-2xl">
+                    <div className="flex items-start gap-3">
+                      {mounted ? (
+                        theme === "dark" ? (
+                          <Image
+                            src={darkLogo}
+                            alt="Logo"
+                            className="w-auto object-contain rounded-lg"
+                            priority
+                          />
+                        ) : (
+                          <Image
+                            src={lightLogo}
+                            alt="Logo"
+                            className="w-auto object-contain"
+                          />
+                        )
+                      ) : (
+                        <div className="w-24 h-10 bg-gray-300 dark:bg-gray-700 animate-pulse rounded" />
+                      )}
+                    </div>
 
-                  <div className="mt-2">
-                    <p className="text-xs text-muted-foreground">
-                      Lorem Ipsum is simply dummy text of the printing industry.
-                    </p>
+                    <div className="mt-2">
+                      <p className="text-xs text-muted-foreground">
+                        Lorem Ipsum is simply dummy text of the printing
+                        industry.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarHeader>
 
-              <Button className="bg-green-500 hover:bg-green-600 flex items-center text-white">
-                New Query
-                <PlusCircle className="h-4 w-4 ml-2" />
-              </Button>
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarHeader>
+        <SidebarContent className="flex flex-col gap-4 p-3  ">
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <div className=" flex flex-col gap-6">
+                <CommonButton
+                  size="lg"
+                  className="w-full flex  items-center justify-center gap-2"
+                >
+                  New Query
+                  <PlusCircle className="h-4 w-4" />
+                </CommonButton>
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search"
+                    className="pl-8 bg-background border-border"
+                  />
+                </div>
+              </div>
 
-      {/* Content */}
-      <SidebarContent className="flex flex-col gap-4 p-3 border overflow-hidden rounded-lg border-dashed mt-2">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search"
-                className="pl-8 bg-background border-border"
-              />
-            </div>
+              <div className=" pt-6">
+                <CommonHeader size="sm" className=" mb-2 text-[#DFE3E8]">
+                  Recent
+                </CommonHeader>
 
-            {/* Recent */}
-            <div className="mt-5">
-              <p className="text-xs text-muted-foreground mb-2">Recent</p>
-              <hr className="bg-border mb-2" />
-              <div className="space-y-1 max-h-48 overflow-y-hidden">
-                {recentItems.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between w-full rounded-lg hover:bg-muted transition-colors"
-                  >
-                    {/* Left side: main button */}
-                    <Button
-                      variant="ghost"
-                      className="flex-1 justify-start text-sm text-muted-foreground overflow-hidden"
+                <hr className=" border-[#454F5B] my-3" />
+                <div className="space-y-1 max-h-44 overflow-y-hidden pb-5">
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={text}
+                      alt="Logo"
+                      className="w-auto object-contain"
+                    />
+                    <CommonHeader className=" truncate">
+                      {recentItems[0]}
+                    </CommonHeader>
+                  </div>
+                  {recentItems.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className=" pl-2 flex items-center justify-between w-full transition-colors"
                     >
-                      <MessageSquare className="h-4 w-4 mr-2 shrink-0" />
-                      <span className="truncate">{item}</span>
-                    </Button>
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src={textGray}
+                          alt="Logo"
+                          className="w-auto object-contain"
+                        />
+                        <CommonHeader className=" !text-[#637381] truncate">
+                          {item}
+                        </CommonHeader>
+                      </div>
 
-                    {/* Right side: actions */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="p-2 text-muted-foreground hover:text-foreground shrink-0">
-                          <MoreVertical className="h-4 w-4" />
-                        </button>
-                      </DropdownMenuTrigger>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="p-2 text-muted-foreground hover:text-foreground shrink-0">
+                            <MoreVertical className="h-4 w-4" />
+                          </button>
+                        </DropdownMenuTrigger>
 
-                      <DropdownMenuContent align="end" className="w-40">
-                        <ShareDialog />
-                        <RenameDialog />
-                        <DeleteDialog />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                ))}
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="mt-2 w-full justify-center text-xs"
-              >
-                See More
-              </Button>
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-
-      {/* Footer */}
-      <SidebarFooter className="p-3 border rounded-lg border-dashed mt-2">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="/avatars/shadcn.jpg" alt="User" />
-                  <AvatarFallback>BK</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm font-medium">Brooklyn</p>
-                  <p className="text-xs text-muted-foreground">
-                    felicia.reid@example.com
-                  </p>
+                        <DropdownMenuContent align="end" className="w-40">
+                          <ShareDialog />
+                          <RenameDialog />
+                          <DeleteDialog />
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  ))}
                 </div>
+                <CommonButton
+                  variant="secondary"
+                  size="md"
+                  className=" mt-5 w-full font-bold !py-3 !bg-[linear-gradient(0deg,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.2)_100%),linear-gradient(0deg,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.2)_100%),linear-gradient(0deg,rgba(0,0,0,0.2)_0%,rgba(0,0,0,0.2)_100%),#212B36]"
+                >
+                  See More
+                </CommonButton>
               </div>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
 
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full text-xs border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950"
+        <SidebarFooter className="p-3 ">
+          <CommonBorder size="sm" className="!rounded-2xl">
+            <div className="flex justify-end">
+              <CommonButton
+                onClick={() => setOpen(true)}
+                variant="secondary"
+                size="md"
+                className="!px-6  mb-3"
               >
-                Upgrade Plan
-              </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full text-xs text-red-500 border-red-600 hover:bg-red-50 dark:hover:bg-red-950"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Log out
-              </Button>
+                Upgrade
+              </CommonButton>
             </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarFooter>
+            <div className="mb-6">
+              <CommonHeader size="lg">
+                {profile?.data.fullName || " "}
+              </CommonHeader>
+              <CommonHeader>{profile?.data.email || " "}</CommonHeader>
+            </div>
+            <CommonButton
+              onClick={handleLogout}
+              variant="secondary"
+              className=" w-full !py-3 !bg-white !text-[#161C24] !font-bold"
+            >
+              Logout
+            </CommonButton>
+          </CommonBorder>
+        </SidebarFooter>
 
-      <SidebarRail />
-    </Sidebar>
-  )
+        <SidebarRail />
+      </Sidebar>
+      {open && <SubscriptionDropdownItem handleClose={handleClose} />}
+    </>
+  );
 }
